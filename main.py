@@ -495,3 +495,234 @@ category_monthly_sales_ri = category_monthly_sales.reset_index()
 #plt.grid(True)
 #plt.tight_layout()
 #plt.show()
+
+
+####Mission 5: Extra(Bonus)
+
+###5.1: Pareto Analysis (80/20)
+product_sales = merged_df.groupby("ürün_adi")["toplam_satis"].sum().sort_values(ascending=False)
+total_sales = product_sales.sum()
+pareto_limit = total_sales * 0.8
+total = 0
+for product, sales in product_sales.items():
+    total += sales
+    if total >= pareto_limit:
+        break
+
+
+product_sales_pareto = product_sales[product_sales.cumsum() <= pareto_limit]
+
+print("""
+      -------------------------------------
+        Pareto Analysis: Products that make up the top %80 of sales:
+      -------------------------------------
+      """)
+for product in product_sales_pareto.index:
+    print(product)
+    
+"""(print)
+Kalem
+Telefon
+Çanta
+Defter
+Fırın
+Su Şişesi
+Mouse
+"""
+
+    #Graphs (product_sales_pareto)
+#plt.figure(figsize=(12, 6))
+#plt.plot(product_sales_pareto.index, product_sales_pareto.values, marker="o",label="product_sales_pareto")
+#plt.title("Product Sales Pareto")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+
+
+###5.2: Cohort Analysis
+    # Find customers' first purchase date
+customers_first = merged_df.groupby("musteri_id")["tarih"].min().reset_index()
+customers_first.columns = ["musteri_id", "first_sale_date"]
+
+merged_df_first_sale = pd.merge(merged_df, customers_first, on="musteri_id", how="inner")
+#merged_df_first_sale.to_csv("datasets\\custom\\merged_data_w_first_sale.csv", index=False)
+
+    # Create cohort month (based on first purchase date)
+merged_df_first_sale["cohort_month"] = merged_df_first_sale["first_sale_date"].dt.to_period("M")
+
+    # Create purchase month (based on sales date)
+merged_df_first_sale["sale_month"] = merged_df_first_sale["tarih"].dt.to_period("M")
+
+    # Calculate number of users for cohort analysis
+cohort_data = merged_df_first_sale.groupby(["cohort_month", "sale_month"]).agg({"musteri_id": pd.Series.nunique}).reset_index()
+cohort_data.columns = ["cohort_month", "sale_month", "active_customer_count"]
+
+    # Calculate how many months have passed for each cohort
+cohort_data["passed_months"] = (cohort_data["sale_month"] - cohort_data["cohort_month"]).apply(lambda x: x.n)
+
+    # Cohort Table
+cohort_pivot = cohort_data.pivot_table(index="cohort_month", columns="passed_months", values="active_customer_count")
+
+    # Calculate the purchase rate for each month, based on the first month
+cohort_pivot_percentage = cohort_pivot.divide(cohort_pivot.iloc[:, 0], axis=0) * 100
+
+    # Results
+#print("Cohort Analysis (% Uptake Rate):")
+#print(cohort_pivot_percentage)
+
+    # Graphs (cohort_analysis_customer_repurchase_rate)
+#plt.figure(figsize=(14, 10))
+#sns.heatmap(cohort_pivot_percentage, annot=True, fmt=".1f", cmap="YlGnBu")
+#plt.title("Cohort Analysis: Customer Repurchase Rate (%)")
+#plt.xlabel("Passed Months")
+#plt.ylabel("Cohort Months")
+#plt.show()
+
+
+
+###5.3: Basic Regression Model (Weekly)
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+   ## Calculate total weekly sales
+weekly_sales_md = merged_df.resample("W", on="tarih")["toplam_satis"].sum().reset_index()
+
+   ## Set features (weeks) and target variable (sales amount)
+weekly_sales_md["week"] = np.arange(len(weekly_sales_md))    # Represent weeks numerically
+X = weekly_sales_md[["week"]]                                # Independent variable
+y = weekly_sales_md["toplam_satis"]                          # Dependent variable
+
+   ## Separating data as train/test
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+   ## Create and train the model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+   ## Make the model's predictions
+y_pred = model.predict(X_test)
+
+   ## Measuring model accuracy
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+   ## Results
+print("""
+      -------------------------------------
+        Model Errors:
+      -------------------------------------
+      """)
+print("Mean Absolute Error (MAE):", mae)
+print("Mean Squared Error (MSE):", mse)
+print("Root Mean Squared Error (RMSE):", rmse)
+print("R^2 Score:", r2)
+
+    # Graphs (basic_reg_weekly_predict)
+#plt.figure(figsize=(14, 6))
+#plt.plot(X_test["week"], y_test, "o", label="Real Sales", markersize=8)
+#plt.plot(X_test["week"], y_pred, "r-", label="Predict Sales")
+#plt.xlabel("Week")
+#plt.ylabel("Total Sales")
+#plt.title("Actual and Estimated Weekly Sales Amounts")
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+
+
+###5.4: RFM (Recency, Frequency, Monetary) Analysis
+
+    # Set a reference date for analysis (for example, one day after the latest date of the data set)
+referance_date = merged_df_first_sale["tarih"].max() + pd.Timedelta(days=1)
+
+    # Calculate RFM metrics
+rfm = merged_df_first_sale.groupby("musteri_id").agg({
+    "tarih": lambda x: (referance_date - x.max()).days,   # Recency
+    "musteri_id": "count",                                # Frequency
+    "toplam_satis": "sum"                                 # Monetary
+})
+
+    # Change column names
+rfm.columns = ["Recency", "Frequency", "Monetary"]
+
+    # Filter customers with a Monetary value of 0
+rfm = rfm[rfm["Monetary"] > 0]
+
+    # Determine RFM scores
+rfm["R_Score"] = pd.qcut(rfm["Recency"], 4, labels=[4, 3, 2, 1])
+rfm["F_Score"] = pd.qcut(rfm["Frequency"].rank(method="first"), 4, labels=[1, 2, 3, 4])
+rfm["M_Score"] = pd.qcut(rfm["Monetary"], 4, labels=[1, 2, 3, 4])
+
+    # Combining RFM Score
+rfm["RFM_Score"] = rfm["R_Score"].astype(str) + rfm["F_Score"].astype(str) + rfm["M_Score"].astype(str)
+
+    # Segments
+segment_map = {
+    "444": "Champions",
+    "344": "Loyal Customers",
+    "144": "Potential Loyalists",
+    "244": "New Customers",
+    "441": "At Risk",
+    "111": "Hibernating"
+}
+rfm["Segment"] = rfm["RFM_Score"].map(segment_map).fillna("Others")
+
+    # Results
+print("""
+      -------------------------------------
+        RFM Analysis:
+      -------------------------------------
+      """)
+print(rfm.head(15))
+
+"""(print (15))
+      -------------------------------------
+        RFM Analysis:
+      -------------------------------------
+            Recency  Frequency  Monetary R_Score F_Score M_Score RFM_Score        Segment
+musteri_id
+1004            224          2  13811.82       3       3       3       333         Others
+1006            140          1  14890.10       3       1       3       313         Others
+1007            295          1   4135.29       2       1       2       212         Others
+1009            171          2  11625.38       3       3       3       333         Others
+1012            169          1   5463.05       3       1       2       312         Others
+1013            563          2   7648.86       1       3       2       132         Others
+1015            154          1  13303.01       3       1       3       313         Others
+1018            450          3  36361.28       2       4       4       244  New Customers
+1020            293          2   9358.74       2       3       2       232         Others
+1024            585          1   2756.35       1       1       1       111    Hibernating
+1029            100          1   2977.20       4       1       1       411         Others
+1033            108          3  21208.30       4       4       4       444      Champions
+1034             71          2   5650.14       4       3       2       432         Others
+1040            708          1  12854.93       1       1       3       113         Others
+1043            646          1  11116.71       1       1       3       113         Others
+"""
+
+    #Frequent customers
+frequent_customers = rfm[rfm["Segment"] == "Loyal Customers"]
+print("""
+      -------------------------------------
+        RFM Analysis- Loyal Customers:
+      -------------------------------------
+      """)
+print(frequent_customers.head())
+
+"""(print)
+      -------------------------------------
+        RFM Analysis- Loyal Customers:
+      -------------------------------------
+
+            Recency  Frequency  Monetary R_Score F_Score M_Score RFM_Score          Segment
+musteri_id
+1116            173          3  47421.10       3       4       4       344  Loyal Customers
+1150            163          4  23606.59       3       4       4       344  Loyal Customers
+1274            137          3  17617.06       3       4       4       344  Loyal Customers
+1324            268          3  26002.39       3       4       4       344  Loyal Customers
+1522            179          4  26099.93       3       4       4       344  Loyal Customers
+"""

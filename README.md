@@ -201,3 +201,61 @@ This section covers advanced data manipulation techniques, including city-based 
 - **Maximum Spending by Customer**: The customer with the highest spending in each city was identified, which can be useful for targeting high-value customers.
 - **Product Sales Growth**: The average sales growth for each product helps understand which products are performing well over time.
 - **Category Sales and Change Rates**: The analysis of monthly sales and change rates for each category provides insights into trends and patterns across different product categories.
+
+
+### Task 5: Extra (Bonus)
+
+This section covers additional analysis techniques, including Pareto analysis, cohort analysis, regression modeling, and RFM (Recency, Frequency, Monetary) analysis. Each task provides valuable insights into customer behavior, sales trends, and predictive modeling.
+
+#### **5.1: Pareto Analysis (80/20 Rule)**
+
+- **Pareto Analysis**: The total sales for each product were calculated and sorted in descending order. Using the 80/20 rule (Pareto principle), the analysis identifies the products that contribute to 80% of total sales. The cumulative sales were computed, and products were selected until the total sales reached 80%.
+  
+    - **Results**: The products contributing to 80% of the total sales are displayed. This analysis helps identify key products driving the majority of sales. These products are `Kalem, Telefon, Çanta, Defter, Fırın, Su Şişesi, Mouse`
+
+    - **Visualization**: A graph (`product_sales_pareto`) is created to visualize the Pareto distribution of product sales.
+    ![Pareto Distribution of Product Sales](./graphs/product_sales_pareto.png)
+
+#### **5.2: Cohort Analysis**
+
+- **Cohort Creation**: Customers' first purchase date was identified, and a cohort month was assigned based on this date. This information was added to the new DataFrame and saved as .csv. The merged dataset, `merged_df_first_sale`, was created, and sample data was displayed. Also saved it as `merged_data_w_first_sale.csv` in `datasets/custom` folder. The sales data was then grouped by cohort month and sale month to calculate the number of active customers for each cohort.
+  
+- **Cohort Table**: A cohort table was created to calculate the percentage of customers making repeat purchases in subsequent months.
+
+    - **Results**: A heatmap (`cohort_analysis_customer_repurchase_rate`) provides a visual representation of the repurchase rate for each cohort, showing customer retention trends over time.
+    ![Cohort Analysis Customer Repurchase Rate](./graphs/cohort_analysis_customer_repurchase_rate.png)
+
+#### **5.3: Basic Regression Model (Weekly Sales Prediction)**
+
+- **Total Weekly Sales**: The total sales (`toplam_satis`) were aggregated by week. The sales data was used to train a simple linear regression model to predict weekly sales trends.
+
+- **Modeling**: The data was split into training and testing sets. A linear regression model was trained using the weekly data to predict future sales.
+
+    - **Model Performance**: The model's accuracy was evaluated using metrics such as:
+      - Mean Absolute Error (MAE)
+      - Mean Squared Error (MSE)
+      - Root Mean Squared Error (RMSE)
+      - R² Score (Goodness of fit)
+
+    - **Results**: The regression model's errors and performance metrics are displayed, and a graph (`basic_reg_weekly_predict`) shows the predicted sales versus actual sales.
+    ![Basic Regression Model Weekly Predictions](./graphs/basic_reg_weekly_predict.png)
+
+#### **5.4: RFM (Recency, Frequency, Monetary) Analysis**
+
+- **RFM Metrics**: Recency, Frequency, and Monetary values were calculated for each customer:
+  - **Recency**: The number of days since the customer's last purchase.
+  - **Frequency**: The number of purchases made by the customer.
+  - **Monetary**: The total sales amount spent by the customer.
+
+- **RFM Scoring**: Customers were scored based on their Recency, Frequency, and Monetary values, with higher scores indicating more valuable customers. The scores were used to categorize customers into segments such as `Champions, Loyal Customers, and At Risk.`
+
+    - **Results**: A summary of the RFM analysis and the customer segments is displayed. Customers are classified into different segments based on their RFM scores, which helps identify the most valuable and at-risk customers.
+
+    - **Frequent Customers**: The analysis also highlights "Loyal Customers," who are frequent buyers with high monetary values.
+
+### **Key Takeaways**
+
+- **Pareto Analysis**: Identifying the top products that contribute the most to sales helps prioritize efforts on high-performing items.
+- **Cohort Analysis**: This provides insights into customer retention, showing how many customers make repeat purchases over time.
+- **Regression Model**: The model helps predict future sales trends, providing a basic forecast for business planning.
+- **RFM Analysis**: The segmentation of customers based on their behavior allows for targeted marketing and personalized strategies to increase customer loyalty.

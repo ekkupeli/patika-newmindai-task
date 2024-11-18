@@ -158,3 +158,46 @@ This section focuses on analyzing categorical data, including total sales by cat
 - **Kozmetik** is more popular among older customers (50+) and female customers.
 - There is a diverse preference across different age groups and genders, highlighting the importance of targeting specific customer segments with tailored marketing strategies.
 
+
+### Task 4: Advanced Data Manipulation
+
+This section covers advanced data manipulation techniques, including city-based analysis, customer and city spending analysis, product sales growth, and category-wise sales analysis. Below are the key tasks performed:
+
+#### **4.1.1: City-Based Analysis**
+
+- **Spending by City**: The total spending (`harcama_miktari`) for each city was calculated by grouping the data by `sehir` (city). The results were then sorted in descending order to identify the cities with the highest total spending.
+
+#### **4.1.2: Customer-City Analysis**
+
+- **Maximum Spending by Customer in Each City**: The data was grouped by both `musteri_id` (customer ID) and `sehir` (city), and the total spending for each combination was calculated. We then identified the customer with the maximum spending in each city using the `idxmax()` function and extracted the corresponding spending values.
+  
+- **Customer and City Expenditure Data**: A new DataFrame was created to display the `Customer İd` and the corresponding `Amount of Expenditure` for the customer who spent the most in each city.
+
+#### **4.2: Calculate the Average Sales Growth Rate for Each Product**
+
+- **Monthly Product Sales**: The sales data for each product was grouped by month (`tarih`) column and product (`ürün_adi`). The total quantity sold (`adet`) for each product was then summed for each month.
+  
+- **Sales Growth Rate**: The percentage change in sales for each product was calculated using `pct_change()`. This rate represents the month-over-month growth rate for each product.
+  
+- **Average Sales Growth Rate**: The average sales growth rate for each product was calculated by grouping the sales growth rates by product and computing the mean.
+
+#### **4.3: Monthly Total Sales and Change Analysis by Category**
+
+- **Category Monthly Sales**: The total sales (`toplam_satis`) for each product category were calculated by grouping the data by month and category (`kategori`). The total sales for each category were then summed for each month.
+
+- **Sales Change Rate by Category**: The percentage change in total sales for each category was calculated by using the `pct_change()` function. This change rate was then reset to make the data easier to visualize.
+  
+- **Monthly Sales Data by Category**: A separate DataFrame was created to hold the reset sales data, which was used for plotting graphs showing the total sales and the change rates for each category over time.
+
+    - **Graphs**: Visualizations were created to show:
+        - The **monthly total sales** for each category.
+        ![Cathegoric Monthly Total Sales](./graphs/monthly_total_sales_of_each_category.png)
+        - The **monthly change rates** for total sales in each category.
+        ![Cathegoric Monthly Total Sales Changes](./graphs/monthly_total_sales_change_ratesof_each_category.png)
+
+### **Key Takeaways**
+
+- **Spending by City**: The city with the highest total spending was identified, providing insights into regional spending patterns.
+- **Maximum Spending by Customer**: The customer with the highest spending in each city was identified, which can be useful for targeting high-value customers.
+- **Product Sales Growth**: The average sales growth for each product helps understand which products are performing well over time.
+- **Category Sales and Change Rates**: The analysis of monthly sales and change rates for each category provides insights into trends and patterns across different product categories.

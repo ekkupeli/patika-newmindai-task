@@ -413,3 +413,85 @@ Name: toplam_satis, dtype: float64
 Erkek   Ev Aletleri
 Kadın   Kozmetik
 """
+
+
+####Mission 4: Advanced Data Manipulation
+
+###4.1.1: City Based Analysis
+city_group_sales = merged_df.groupby("sehir")["harcama_miktari"].sum().sort_values(ascending=False)
+
+print("""
+      -------------------------------------
+        Spending by City:
+      -------------------------------------
+      """)
+print(city_group_sales)
+
+###4.1.2: Customer-City Analysis
+customer_city_group_sales = merged_df.groupby(["musteri_id", "sehir"])["harcama_miktari"].sum()
+id_customer_city_group_sales = customer_city_group_sales.groupby("sehir").idxmax()
+max_customer_city_group_sales = customer_city_group_sales.groupby("sehir").max().sort_values(ascending=False)
+
+customer_city_sales = pd.DataFrame({
+    "Customer İd": [idx[0] for idx in id_customer_city_group_sales],
+    "Amount of Expenditure": max_customer_city_group_sales
+})
+
+print("""
+      -------------------------------------
+        Maximum Amount Spending by Customer ID and City:
+      -------------------------------------
+      """)
+print(customer_city_sales)
+
+
+
+###4.2: Calculate the Average Sales Growth Rate for Each Product 
+
+product_monthly_sales = merged_df.groupby([merged_df["tarih"].dt.to_period("M"), "ürün_adi"])["adet"].sum()
+product_monthly_sales_ch = product_monthly_sales.groupby("ürün_adi").pct_change() * 100
+product_average_sales_gr = product_monthly_sales_ch.groupby("ürün_adi").mean()
+
+print("""
+      -------------------------------------
+        Average Sales Growth Rate for Each Product:
+      -------------------------------------
+      """)
+print(product_average_sales_gr)
+
+
+###4.3: Monthly Total Sales and Change Analysis by Category
+
+category_monthly_sales = merged_df.groupby([merged_df["tarih"].dt.to_period("M"), "kategori"])["toplam_satis"].sum()
+category_monthly_sales_ch = category_monthly_sales.groupby("kategori").pct_change() * 100
+category_monthly_sales_ch = category_monthly_sales_ch.reset_index()
+category_monthly_sales_ri = category_monthly_sales.reset_index()
+
+    # Graphs (monthly_total_sales_of_each_category)
+#plt.figure(figsize=(14, 8))
+#for kategori in category_monthly_sales_ri["kategori"].unique():
+#    kategori_veri = category_monthly_sales_ri[category_monthly_sales_ri["kategori"] == kategori]
+#    plt.plot(kategori_veri["tarih"].astype(str), kategori_veri["toplam_satis"], marker="o", label=kategori)
+#plt.title("Monthly Category Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Category Sales")
+#plt.xticks(rotation=45)
+#plt.legend(title="Kategori")
+#plt.grid(True)
+#plt.tight_layout()
+#plt.show()
+
+    # Graphs (monthly_total_sales_change_ratesof_each_category)
+#plt.figure(figsize=(14, 8))
+#for kategori in category_monthly_sales_ch["kategori"].unique():
+#    kategori_veri = category_monthly_sales_ch[category_monthly_sales_ch["kategori"] == kategori]
+#    plt.plot(kategori_veri["tarih"].astype(str), kategori_veri["toplam_satis"], marker="o", label=kategori)
+#
+#plt.title("Monthly Total Sales Change Rates of Each Category")
+#plt.xlabel("Tarih")
+#plt.ylabel("Değişim Oranı (%)")
+#plt.xticks(rotation=45)
+#plt.legend(title="Kategori")
+#plt.grid(True)
+#plt.tight_layout()
+#plt.show()

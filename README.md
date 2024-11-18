@@ -61,3 +61,56 @@ Finally, the **Sales Data** and **Customer Data** were merged using the `"muster
 
 The merged dataset, `merged_df`, was created, and sample data was displayed. Also saved it as `merged_data.csv` in `datasets/custom` folder.
 
+
+### Task 2: Time Series Analysis
+
+This section focuses on analyzing the sales data over time, examining trends and patterns at both weekly and monthly levels. The analysis was divided into several parts as outlined below.
+
+#### **2.1. Unique Values Analysis**
+
+- **Unique Products**: A list of unique products in the dataset was retrieved using `unique()` on the `ürün_adi` column. This helps identify the distinct products that were sold.
+
+- **Unique Categories**: A similar analysis was done on the `kategori` column to determine the different product categories.
+
+- **Date Range**: The `tarih` column, which contains dates, was converted to `datetime` format to facilitate time-based analysis. The earliest and latest dates in the dataset were also determined to get the overall time span of the data.
+
+#### **2.1.1. Weekly Sales Analysis**
+
+- **Weekly Sales**: The total sales for each week were calculated by resampling the data on a weekly basis (`"W-Mon"`), summing the `toplam_satis` values for each week. This helps identify trends in sales over time on a weekly scale.
+
+- **Weekly Item Sales**: The sales of each individual product were also calculated weekly by grouping the data by product name (`ürün_adi`) and resampling the data on a weekly basis. The `adet` column, representing the quantity sold, was summed for each product.
+
+- **Graphing**: Two graphs were plotted:
+  - The first graph shows the total weekly sales (`weekly_sales`).
+
+  - The second graph shows weekly sales for each product (`weekly_item_sales`), enabling a comparison of the performance of different products over time.   
+  ![Weekly Sales](./graphs/weekly_sales.png)
+
+#### **2.1.2. Monthly Sales Analysis**
+
+- **Monthly Sales**: Similar to the weekly analysis, total monthly sales were calculated by resampling the data on a monthly basis (`"ME"`) and summing the `toplam_satis` values.
+
+- **Monthly Item Sales**: The total sales for each product were also calculated on a monthly basis, summing the `adet` values for each product.
+
+- **Graphing**: Two graphs were plotted for the monthly sales analysis:
+  - The first graph shows the total monthly sales (`monthly_sales`).
+  - The second graph shows the monthly sales for each product (`monthly_item_sales`), providing insight into how each product performed across different months.    
+  ![Monthly Sales](./graphs/monthly_sales.png)
+
+#### **2.2. Additional Time Series Insights**
+
+- **Monthly First and Last Days**: The first and last days of each month were determined using the `min()` and `max()` functions on the `tarih` column, grouped by month. This helps understand the time frame for each monthly period in the dataset.
+
+- **Weekly Total Item Sales**: The total quantity of items sold each week was calculated by resampling the `adet` column on a weekly basis. This provides insights into weekly sales volume.
+
+#### **Graphs**
+
+Several graphs were created to visualize the results of the time series analysis:
+- Weekly and monthly sales trends.
+- Weekly and monthly sales trends for individual items.
+- Total item sales on a weekly basis.   
+![Weekly Item Sales](./graphs/weekly_item_sales_sum.png)
+
+The visualizations help identify trends and patterns in product sales over time, aiding in the understanding of business performance and sales strategies.
+
+

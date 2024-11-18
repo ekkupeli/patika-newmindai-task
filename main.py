@@ -146,3 +146,153 @@ print("""
       """)
 print(merged_df.head())
 
+
+####Mission 2: Time Series Analysis
+
+### Unique control
+    #Unique products
+unique_products = merged_df["ürün_adi"].unique()
+#print(unique_products)
+"""(print)
+  ['Mouse' 'Kalem' 'Bilgisayar' 'Klima' 'Fırın' 'Defter' 'Çanta' 'Su Şişesi' 'Kulaklık' 'Telefon']
+"""
+    
+
+    #Unique categories
+unique_categories = merged_df["kategori"].unique()
+#print(unique_categories)
+"""(print)
+['Ev Aletleri' 'Kırtasiye' 'Giyim' 'Elektronik' 'Mutfak Ürünleri' 'Kozmetik']
+"""
+
+
+    # Convert the date column to datetime format and check dates
+merged_df["tarih"] = pd.to_datetime(merged_df["tarih"])
+first_date = merged_df["tarih"].min()
+last_date = merged_df["tarih"].max()
+#print(f"First date: {first_date}")
+#print(f"Last date: {last_date}")
+"""(print)
+First date: 2022-11-06 00:00:00
+Last date: 2024-11-05 00:00:00
+"""
+
+
+###2.1.1: Analysis of Weekly Sales
+weekly_sales = merged_df.resample("W-Mon", on="tarih")["toplam_satis"].sum()
+weekly_item_sales = merged_df.groupby(["ürün_adi"]).resample("W-Mon", on="tarih")["adet"].sum().unstack(level=0)
+
+    #First 5 weeks, item sales
+#print(weekly_item_sales.head())    
+
+    # Graphs (weekly_sales-toplam_satis)
+#plt.figure(figsize=(12, 6))
+#plt.plot(weekly_sales.index, weekly_sales.values, marker="o",label="weekly_sales")
+#plt.title("Weekly Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+
+    # Graphs (weekly_sales)
+#plt.figure(figsize=(12, 6))
+#plt.subplot(2,1,1)
+#plt.plot(weekly_sales.index, weekly_sales.values, marker="o",label="weekly_sales")
+#plt.title("Weekly Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#
+#plt.subplot(2,1,2)
+#for urun in weekly_item_sales.columns:
+#    plt.plot(weekly_item_sales.index, weekly_item_sales[urun], marker="o", label=urun)
+#plt.title("Weekly Item Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Product Sales")
+#plt.xticks(rotation=45)
+#plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
+#plt.grid(True)
+#plt.show()
+
+
+###2.1.2: Analysis of Monthly Sales
+monthly_sales = merged_df.resample("ME", on="tarih")["toplam_satis"].sum()
+monthly_item_sales = merged_df.groupby(["ürün_adi"]).resample("ME", on="tarih")["adet"].sum().unstack(level=0)
+
+    # Graphs (monthly_sales-toplam_satis)
+#plt.figure(figsize=(12, 6))
+#plt.plot(monthly_sales.index, monthly_sales.values, marker="o",label="monthly_sales")
+#plt.title("Monthly Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+
+    #Graphs (monthly_sales)
+#plt.figure(figsize=(12, 6))
+#plt.subplot(2,1,1)
+#plt.plot(monthly_sales.index, monthly_sales.values, marker="o",label="monthly_sales")
+#plt.title("Monthly Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#
+#plt.subplot(2,1,2)
+#for urun in monthly_item_sales.columns:
+#    plt.plot(monthly_item_sales.index, monthly_item_sales[urun], marker="o", label=urun)
+#plt.title("Monthly Item Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Product Sales")
+#plt.xticks(rotation=45)
+#plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
+#plt.grid(True)
+#plt.show()
+
+
+###2.2.1: Monthly First-Last Days
+monthly_first = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].min()
+monthly_last = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].max()
+
+print("""
+      -------------------------------------
+        Monthly First Days:
+      -------------------------------------
+      """)
+print(monthly_first)
+print("""
+      -------------------------------------
+        Monthly Last Days:
+      -------------------------------------
+      """)
+print(monthly_last)
+
+
+###2.2.2:Weekly Total Item Sales
+weekly_item_sales_sum = merged_df.resample("W-Mon", on="tarih")["adet"].sum()
+
+print("""
+      -------------------------------------
+        Weekly Total Item Sales:
+      -------------------------------------
+      """)
+print(weekly_item_sales_sum.head())
+
+    # Graphs (weekly_item_sales_sum)
+#plt.figure(figsize=(12, 6))
+#plt.plot(weekly_item_sales_sum.index, weekly_item_sales_sum.values, marker="o",label="weekly_item_sales_sum")
+#plt.title("Weekly Total Item Sales")
+#plt.xlabel("Date")
+#plt.ylabel("Sales")
+#plt.xticks(rotation=45)
+#plt.legend()
+#plt.grid(True)
+#plt.show()
+

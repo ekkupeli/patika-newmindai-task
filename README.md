@@ -114,3 +114,47 @@ Several graphs were created to visualize the results of the time series analysis
 The visualizations help identify trends and patterns in product sales over time, aiding in the understanding of business performance and sales strategies.
 
 
+### Task 3: Categorical and Numerical Analysis
+
+This section focuses on analyzing categorical data, including total sales by category, sales trends by age group, and sales trends by gender. The analysis is broken down into three parts as follows:
+
+#### **3.1: Categorical Total Sales**
+
+- **Categoric Sales**: The total sales for each product category were calculated by grouping the data by the `kategori` column and summing the `toplam_satis` values. This gives us an overview of how sales are distributed across different product categories.
+
+- **Sales Proportions**: The proportion of total sales for each category was calculated by dividing each category’s sales by the overall sales and multiplying by 100. This percentage helps understand the share of each category in the total sales.
+
+#### **3.2: Age Group Analysis**
+
+- **Age Group Classification**: The dataset was divided into age groups using the `pd.cut()` function. The age groups are categorized as:
+  - 18-25 years
+  - 26-35 years
+  - 36-50 years
+  - 50+ years
+
+- **Sales Trends by Age Group**: The total sales for each age group were calculated by grouping the data by `age_group` and summing the `toplam_satis` values. The proportion of total sales for each age group was then computed, providing insight into which age groups contribute the most to overall sales.
+
+- **Categoric Sales Trends by Age Group**: Sales were broken down by both age group and product category. The total sales for each combination of age group and category were calculated and then expressed as a percentage of the overall sales. This shows which product categories are most popular within each age group.
+
+  **Key Insights**:
+  - The **Ev Aletleri** category is the highest for the 18-25 age group.
+  - The **Kırtasiye** category is the highest for the 26-35 age group.
+  - The **Giyim** category is the highest for the 36-50 age group.
+  - The **Kozmetik** category is the highest for the 50+ age group.
+
+#### **3.3: Sex Analysis**
+
+- **Sales Trends by Gender**: Total sales for each gender were calculated by grouping the data by the `cinsiyet` column and summing the `toplam_satis` values. The proportion of total sales for each gender was then computed to understand the gender distribution in sales.
+
+- **Categoric Sales Trends by Gender**: Similar to the age group analysis, sales were broken down by both gender and product category. The total sales for each combination of gender and category were calculated and then expressed as a percentage of the overall sales. This provides insight into the most popular product categories for each gender.
+
+  **Key Insights**:
+  - For **Erkek** (Male) customers, **Ev Aletleri** is the highest category.
+  - For **Kadın** (Female) customers, **Kozmetik** is the highest category.
+
+### **Key Takeaways**
+
+- The **Ev Aletleri** category is popular among both younger (18-25) and male customers.
+- **Kozmetik** is more popular among older customers (50+) and female customers.
+- There is a diverse preference across different age groups and genders, highlighting the importance of targeting specific customer segments with tailored marketing strategies.
+

@@ -296,3 +296,120 @@ print(weekly_item_sales_sum.head())
 #plt.grid(True)
 #plt.show()
 
+
+####Mission 3: Categorical and Numerical Analysis
+### Category Analysis
+
+###3.1: Categoric Total Sales
+categoric_sales = merged_df.groupby(["kategori"])
+categoric_sales_sum =categoric_sales["toplam_satis"].sum()
+
+#print(categoric_sales_sum)
+
+print("""
+      -------------------------------------
+        Proportion of Sales (%):
+      -------------------------------------
+      """)
+print((categoric_sales_sum / categoric_sales_sum.sum())*100)
+
+
+###3.2: Age Group Analysis
+merged_df["age_group"] = pd.cut(merged_df["yas"], bins=[0, 25, 35, 50, 100], labels=["18-25", "26-35", "36-50", "50+"])
+
+age_group_sales = merged_df.groupby("age_group")["toplam_satis"].sum()
+print("""
+      -------------------------------------
+        Sales Trends by Age Groups:
+      -------------------------------------
+      """)
+print((age_group_sales / age_group_sales.sum())*100)
+
+
+age_group_item_sales = merged_df.groupby(["age_group", "kategori"])["toplam_satis"].sum()
+print("""
+      -------------------------------------
+        Categoric Sales Trends by Age Groups:
+      -------------------------------------
+      """)
+print((age_group_item_sales / age_group_item_sales.sum())*100)
+
+"""(print)
+Categoric Sales Trends by Age Groups:
+age_group  kategori
+18-25      Elektronik         2.577363
+           Ev Aletleri        3.365139      #max
+           Giyim              2.350610
+           Kozmetik           2.558511
+           Kırtasiye          2.535615
+           Mutfak Ürünleri    2.625502
+26-35      Elektronik         3.176721
+           Ev Aletleri        2.761748
+           Giyim              3.064525
+           Kozmetik           2.984322
+           Kırtasiye          3.285186      #max
+           Mutfak Ürünleri    2.801972
+36-50      Elektronik         4.899982
+           Ev Aletleri        5.237388
+           Giyim              5.749624      #max
+           Kozmetik           4.813251
+           Kırtasiye          4.853465
+           Mutfak Ürünleri    4.501777
+50+        Elektronik         5.802893
+           Ev Aletleri        6.223434
+           Giyim              5.637764
+           Kozmetik           6.273852      #max
+           Kırtasiye          5.889715
+           Mutfak Ürünleri    6.029638
+Name: toplam_satis, dtype: float64
+"""
+
+"""(print)
+18-25   Ev Aletleri
+26-35   Kırtasiye
+36-50   Giyim
+50+     Kozmetik
+"""
+
+
+###3.3: Sex Analysis
+
+sex_group_sales = merged_df.groupby("cinsiyet")["toplam_satis"].sum()
+print("""
+      -------------------------------------
+        Sales Trends by Sex Groups:
+      -------------------------------------
+      """)
+print((sex_group_sales / sex_group_sales.sum())*100)
+
+
+sex_group_item_sales = merged_df.groupby(["cinsiyet", "kategori"])["toplam_satis"].sum()
+print("""
+      -------------------------------------
+        Categoric Sales Trends by Sex Groups:
+      -------------------------------------
+      """)
+print((sex_group_item_sales / sex_group_item_sales.sum())*100)
+
+"""(print)
+Categoric Sales Trends by Sex Groups:
+cinsiyet  kategori
+Erkek     Elektronik         8.038064
+          Ev Aletleri        9.088415
+          Giyim              9.030852
+          Kozmetik           7.859921
+          Kırtasiye          7.836352
+          Mutfak Ürünleri    7.673596
+Kadın     Elektronik         8.418896
+          Ev Aletleri        8.499294
+          Giyim              7.771671
+          Kozmetik           8.770016
+          Kırtasiye          8.727629
+          Mutfak Ürünleri    8.285294
+Name: toplam_satis, dtype: float64
+"""
+
+"""(print)
+Erkek   Ev Aletleri
+Kadın   Kozmetik
+"""

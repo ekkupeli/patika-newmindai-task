@@ -489,12 +489,12 @@ Kadın   Ev Aletleri
 ###4.1.1: City Based Analysis
 city_group_sales = merged_df.groupby("sehir")["harcama_miktari"].sum().sort_values(ascending=False)
 
-#print("""
-#      -------------------------------------
-#        Spending by City:
-#      -------------------------------------
-#      """)
-#print(city_group_sales)
+print("""
+      -------------------------------------
+        Spending by City:
+      -------------------------------------
+      """)
+print(city_group_sales)
 
 ###4.1.2: Customer-City Analysis
 customer_city_group_sales = merged_df.groupby(["musteri_id", "sehir"])["harcama_miktari"].sum()
@@ -506,14 +506,25 @@ customer_city_sales = pd.DataFrame({
     "Amount of Expenditure": max_customer_city_group_sales
 })
 
-#print("""
-#      -------------------------------------
-#        Maximum Amount Spending by Customer ID and City:
-#      -------------------------------------
-#      """)
-#print(customer_city_sales)
+print("""
+      -------------------------------------
+        Maximum Amount Spending by Customer ID and City:
+      -------------------------------------
+      """)
+print(customer_city_sales)
 
-
+"""(print)
+           Customer İd  Amount of Expenditure
+sehir
+Gaziantep         8128               23039.85
+Ankara            4342               22392.70
+Bursa             1522               19933.92
+Konya             6095               19473.60
+Adana             8939               19361.36
+İstanbul          3175               19186.56
+Antalya           6869               19183.00
+İzmir             8347               18778.84
+"""
 
 ###4.2: Calculate the Average Sales Growth Rate for Each Product 
 
@@ -521,12 +532,27 @@ product_monthly_sales = merged_df.groupby([merged_df["tarih"].dt.to_period("M"),
 product_monthly_sales_ch = product_monthly_sales.groupby("ürün_adi").pct_change() * 100
 product_average_sales_gr = product_monthly_sales_ch.groupby("ürün_adi").mean()
 
-#print("""
-#      -------------------------------------
-#        Average Sales Growth Rate for Each Product:
-#      -------------------------------------
-#      """)
-#print(product_average_sales_gr)
+print("""
+      -------------------------------------
+        Average Sales Growth Rate for Each Product:
+      -------------------------------------
+      """)
+print(product_average_sales_gr)
+
+"""(print)
+ürün_adi
+Bilgisayar    16.172751
+Defter         9.207474
+Fırın          5.443718
+Kalem         11.632030
+Klima          2.130580
+Kulaklık       6.577236
+Mouse          4.523185
+Su Şişesi      2.097570
+Telefon       -2.015909
+Çanta          4.617467
+Name: adet, dtype: float64
+"""
 
 
 ###4.3: Monthly Total Sales and Change Analysis by Category

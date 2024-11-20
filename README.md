@@ -31,7 +31,7 @@ The task details and requirements are documented in a `.docx` file, which is ava
 
 In this section, two datasets—`sales_df` (sales data) and `customer_df` (customer data)—were examined. The data cleaning and processing steps were carried out as follows:
 
-#### **1.1. Data and Missing Value Check**
+#### **1.1. Data and Missing Value Check and Handling**
 
 First, both datasets were loaded from CSV files, and the first few rows of the data were displayed:
 
@@ -39,6 +39,16 @@ First, both datasets were loaded from CSV files, and the first few rows of the d
 - **Customer Data**: `customer_df`
 
 The general structure and column information of each dataset were checked using the `.info()` function. Additionally, the frequency distribution of specific columns in each dataset, such as `ürün_adi`, `kategori` for the sales data, and `cinsiyet`, `yas` and `sehir`  for the customer data, was examined using `.value_counts()`. This step provided an overview of the distribution of categorical variables in both datasets.
+
+- **Missing Value Handling**:
+   - A custom function, `detect_is_numeric`, was implemented to ensure numeric columns (`fiyat` and `toplam_satis`) were properly converted to numeric types, addressing any non-numeric values.
+   - Missing values in:
+     - `toplam_satis` were filled with the product of `fiyat` and `adet`.
+     - `fiyat` were filled using the ratio of `toplam_satis` to `adet`.
+
+- **Data Consistency**:
+   - A check was performed to ensure `toplam_satis` values matched the product of `fiyat` and `adet`. Any inconsistencies were corrected.
+
 
 #### **1.2. Outlier Detection**
 
@@ -53,7 +63,7 @@ Outliers were searched in the following columns:
 
 For each of these columns, the **lower and upper limits** (`low_limit`, `upp_limit`) were calculated, and outliers were flagged based on these bounds. The count of outliers and the corresponding limits were summarized. 
 
-To prevent the outliers from distorting the dataset, the outliers in the `toplam_satis` column were adjusted to the upper limit. This step ensured that the data remained intact without the influence of extreme outliers.
+To prevent the outliers from distorting the dataset, the outliers in the `toplam_satis` and `fiyat` columns were adjusted to the upper limits. This step ensured that the data remained intact without the influence of extreme outliers.
 
 #### **1.3. Merging Data**
 

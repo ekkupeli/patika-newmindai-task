@@ -51,6 +51,48 @@ print(customer_df["cinsiyet"].value_counts())
 print(customer_df["yas"].value_counts())
 print(customer_df["sehir"].value_counts())
 
+#def convert_datetime_to_numeric(date_str):
+#    try:
+#        # Tarih ve saat bilgisini parçala
+#        year, month, _ = date_str.split("-")[:3]  # İlk 2 kısmı al
+#        return float(f"{int(year) % 100}.{int(month):02}")  # Yılın son 2 hanesi ve ay
+#    except Exception:
+#        return None  # Geçersiz format varsa None döndür
+#
+#sales_df["fiyat"]= sales_df["fiyat"].apply(convert_datetime_to_numeric)
+
+def detect_is_numeric(df, column):
+    if not pd.api.types.is_numeric_dtype(df[column]):
+        #raise ValueError(f"{column} column must be digital type!")
+        df[column] = pd.to_numeric(df[column], errors="coerce")
+    return df
+
+    # Checks
+detect_is_numeric(sales_df, "fiyat")
+detect_is_numeric(sales_df, "toplam_satis")
+print("""
+#      -------------------------------------
+#        Check and Fill the NaN:
+#      -------------------------------------
+#      """)
+#print(sales_df["toplam_satis"].info())
+#print(sales_df[sales_df["toplam_satis"].isnull()])
+sales_df["toplam_satis"]= sales_df["toplam_satis"].fillna(sales_df["fiyat"] * sales_df["adet"])
+#print(sales_df["toplam_satis"].info())
+
+#print(sales_df["fiyat"].info())
+#print(sales_df[sales_df["fiyat"].isnull()])
+sales_df["fiyat"]= sales_df["fiyat"].fillna(sales_df["toplam_satis"] / sales_df["adet"])
+#print(sales_df["fiyat"].info())
+
+print("""
+#      -------------------------------------
+#        Equalizing the Big Numbers:
+#      -------------------------------------
+#      """)
+sales_df["toplam_satis"] = sales_df.apply(
+    lambda row: row["fiyat"] * row["adet"] if row["toplam_satis"] > (row["fiyat"] * row["adet"]) else row["toplam_satis"], axis=1)
+
 ###Define Outliers
 
     ##Control of calculations such as mean and standard deviation
@@ -106,29 +148,30 @@ outliers_summary = {
 }
 
 #print("Summary to outliers:\n",outliers_summary)
+#print("Summary to outliers:\n",sales_fiyat_outliers)
+#print("Summary to outliers:\n",sales_toplam_outliers)
 
 """(print)
-  Summary to outliers:
+  Summary to outliers:  (new dataset)
   {'customer_yas_outliers_count': 0, 'yas_bounds': (-8.0, 96.0), 
   'customer_harcama_outliers_count': 0, 'harcama_bounds': (-2407.415, 7514.085), 
-  'sales_fiyat_outliers_count': 0, 'fiyat_bounds': (-763.4600000000003, 2242.1800000000003), 
-  'sales_toplam_outliers_count': 35, 'toplam_bounds': (-12038.167499999998, 25688.4525),           #outliers are here (up to upp_limit)
+  'sales_fiyat_outliers_count': 0, 'fiyat_bounds': (-744.02125, 2234.5687500000004), 
+  'sales_toplam_outliers_count': 467, 'toplam_bounds': (-15448.205000000002, 31851.595),        #outliers are here (up to upp_limit)
   'sales_adet_outliers_count': 0, 'adet_bounds': (-10.0, 30.0)}
+  
+  Summary to outliers:  (after fill nan)
+ {'customer_yas_outliers_count': 0, 'yas_bounds': (-8.0, 96.0), 
+ 'customer_harcama_outliers_count': 0, 'harcama_bounds': (-2407.415, 7514.085), 
+ 'sales_fiyat_outliers_count': 5, 'fiyat_bounds': (-759.5137500000001, 2242.41625),             #outliers are here (up to upp_limit)
+ 'sales_toplam_outliers_count': 37, 'toplam_bounds': (-12068.63625, 25779.03375),               #outliers are here (up to upp_limit)
+ 'sales_adet_outliers_count': 0, 'adet_bounds': (-10.0, 30.0)}
 """
-    
-
-    ##Graphs (toplam_satis-outliers)
-#plt.figure(figsize=(12, 6))
-#plt.boxplot(data=sales_df, x=sales_df["toplam_satis"], vert=False, label="total_sales")
-#plt.title("Total Sales")
-#plt.xlabel("total_sales")
-#plt.legend()
-#plt.grid(True)
-#plt.show()
 
     ##Equalizing the upp_limit to use outliers without corrupting the dataset 
 sales_df["toplam_satis"] = sales_df["toplam_satis"].apply(
     lambda x: min(max(x, toplam_low), toplam_upp))
+sales_df["fiyat"] = sales_df["fiyat"].apply(
+    lambda x: min(max(x, fiyat_low), fiyat_upp))
 
     #Control of change 
 #print(sales_toplam_outliers)
@@ -145,6 +188,31 @@ print("""
       -------------------------------------
       """)
 print(merged_df.head())
+
+#new outliers check
+#print("""
+#      -------------------------------------
+#        New Outliers Check:
+#      -------------------------------------
+#      """)
+#n_outliers_t = merged_df[(merged_df["toplam_satis"] < toplam_low) | (merged_df["toplam_satis"] > toplam_upp)]
+#print(n_outliers_t)
+#n_outliers_f = merged_df[(merged_df["fiyat"] < fiyat_low) | (merged_df["fiyat"] > fiyat_upp)]
+#print(n_outliers_f)
+#
+#print("""
+#      -------------------------------------
+#        New Nan Check:
+#      -------------------------------------
+#      """)
+#print(merged_df.isnull().sum())
+#for x in merged_df["toplam_satis"]:
+#    if x == None:
+#        print(x)
+#for y in merged_df["fiyat"]:
+#    if y == None:
+#        print(x)
+#
 
 
 ####Mission 2: Time Series Analysis
@@ -261,29 +329,29 @@ monthly_item_sales = merged_df.groupby(["ürün_adi"]).resample("ME", on="tarih"
 monthly_first = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].min()
 monthly_last = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].max()
 
-print("""
-      -------------------------------------
-        Monthly First Days:
-      -------------------------------------
-      """)
-print(monthly_first)
-print("""
-      -------------------------------------
-        Monthly Last Days:
-      -------------------------------------
-      """)
-print(monthly_last)
+#print("""
+#      -------------------------------------
+#        Monthly First Days:
+#      -------------------------------------
+#      """)
+#print(monthly_first)
+#print("""
+#      -------------------------------------
+#        Monthly Last Days:
+#      -------------------------------------
+#      """)
+#print(monthly_last)
 
 
 ###2.2.2:Weekly Total Item Sales
 weekly_item_sales_sum = merged_df.resample("W-Mon", on="tarih")["adet"].sum()
 
-print("""
-      -------------------------------------
-        Weekly Total Item Sales:
-      -------------------------------------
-      """)
-print(weekly_item_sales_sum.head())
+#print("""
+#      -------------------------------------
+#        Weekly Total Item Sales:
+#      -------------------------------------
+#      """)
+#print(weekly_item_sales_sum.head())
 
     # Graphs (weekly_item_sales_sum)
 #plt.figure(figsize=(12, 6))
@@ -306,33 +374,33 @@ categoric_sales_sum =categoric_sales["toplam_satis"].sum()
 
 #print(categoric_sales_sum)
 
-print("""
-      -------------------------------------
-        Proportion of Sales (%):
-      -------------------------------------
-      """)
-print((categoric_sales_sum / categoric_sales_sum.sum())*100)
+#print("""
+#      -------------------------------------
+#        Proportion of Sales (%):
+#      -------------------------------------
+#      """)
+#print((categoric_sales_sum / categoric_sales_sum.sum())*100)
 
 
 ###3.2: Age Group Analysis
 merged_df["age_group"] = pd.cut(merged_df["yas"], bins=[0, 25, 35, 50, 100], labels=["18-25", "26-35", "36-50", "50+"])
 
-age_group_sales = merged_df.groupby("age_group")["toplam_satis"].sum()
-print("""
-      -------------------------------------
-        Sales Trends by Age Groups:
-      -------------------------------------
-      """)
-print((age_group_sales / age_group_sales.sum())*100)
+age_group_sales = merged_df.groupby("age_group", observed=False)["toplam_satis"].sum()
+#print("""
+#      -------------------------------------
+#        Sales Trends by Age Groups:
+#      -------------------------------------
+#      """)
+#print((age_group_sales / age_group_sales.sum())*100)
 
 
-age_group_item_sales = merged_df.groupby(["age_group", "kategori"])["toplam_satis"].sum()
-print("""
-      -------------------------------------
-        Categoric Sales Trends by Age Groups:
-      -------------------------------------
-      """)
-print((age_group_item_sales / age_group_item_sales.sum())*100)
+age_group_item_sales = merged_df.groupby(["age_group", "kategori"], observed=False)["toplam_satis"].sum()
+#print("""
+#      -------------------------------------
+#        Categoric Sales Trends by Age Groups:
+#      -------------------------------------
+#      """)
+#print((age_group_item_sales / age_group_item_sales.sum())*100)
 
 """(print)
 Categoric Sales Trends by Age Groups:
@@ -375,21 +443,21 @@ Name: toplam_satis, dtype: float64
 ###3.3: Sex Analysis
 
 sex_group_sales = merged_df.groupby("cinsiyet")["toplam_satis"].sum()
-print("""
-      -------------------------------------
-        Sales Trends by Sex Groups:
-      -------------------------------------
-      """)
-print((sex_group_sales / sex_group_sales.sum())*100)
+#print("""
+#      -------------------------------------
+#        Sales Trends by Sex Groups:
+#      -------------------------------------
+#      """)
+#print((sex_group_sales / sex_group_sales.sum())*100)
 
 
 sex_group_item_sales = merged_df.groupby(["cinsiyet", "kategori"])["toplam_satis"].sum()
-print("""
-      -------------------------------------
-        Categoric Sales Trends by Sex Groups:
-      -------------------------------------
-      """)
-print((sex_group_item_sales / sex_group_item_sales.sum())*100)
+#print("""
+#      -------------------------------------
+#        Categoric Sales Trends by Sex Groups:
+#      -------------------------------------
+#      """)
+#print((sex_group_item_sales / sex_group_item_sales.sum())*100)
 
 """(print)
 Categoric Sales Trends by Sex Groups:
@@ -420,12 +488,12 @@ Kadın   Kozmetik
 ###4.1.1: City Based Analysis
 city_group_sales = merged_df.groupby("sehir")["harcama_miktari"].sum().sort_values(ascending=False)
 
-print("""
-      -------------------------------------
-        Spending by City:
-      -------------------------------------
-      """)
-print(city_group_sales)
+#print("""
+#      -------------------------------------
+#        Spending by City:
+#      -------------------------------------
+#      """)
+#print(city_group_sales)
 
 ###4.1.2: Customer-City Analysis
 customer_city_group_sales = merged_df.groupby(["musteri_id", "sehir"])["harcama_miktari"].sum()
@@ -437,12 +505,12 @@ customer_city_sales = pd.DataFrame({
     "Amount of Expenditure": max_customer_city_group_sales
 })
 
-print("""
-      -------------------------------------
-        Maximum Amount Spending by Customer ID and City:
-      -------------------------------------
-      """)
-print(customer_city_sales)
+#print("""
+#      -------------------------------------
+#        Maximum Amount Spending by Customer ID and City:
+#      -------------------------------------
+#      """)
+#print(customer_city_sales)
 
 
 
@@ -452,12 +520,12 @@ product_monthly_sales = merged_df.groupby([merged_df["tarih"].dt.to_period("M"),
 product_monthly_sales_ch = product_monthly_sales.groupby("ürün_adi").pct_change() * 100
 product_average_sales_gr = product_monthly_sales_ch.groupby("ürün_adi").mean()
 
-print("""
-      -------------------------------------
-        Average Sales Growth Rate for Each Product:
-      -------------------------------------
-      """)
-print(product_average_sales_gr)
+#print("""
+#      -------------------------------------
+#        Average Sales Growth Rate for Each Product:
+#      -------------------------------------
+#      """)
+#print(product_average_sales_gr)
 
 
 ###4.3: Monthly Total Sales and Change Analysis by Category
@@ -512,13 +580,13 @@ for product, sales in product_sales.items():
 
 product_sales_pareto = product_sales[product_sales.cumsum() <= pareto_limit]
 
-print("""
-      -------------------------------------
-        Pareto Analysis: Products that make up the top %80 of sales:
-      -------------------------------------
-      """)
-for product in product_sales_pareto.index:
-    print(product)
+#print("""
+#      -------------------------------------
+#        Pareto Analysis: Products that make up the top %80 of sales:
+#      -------------------------------------
+#      """)
+#for product in product_sales_pareto.index:
+#    print(product)
     
 """(print)
 Kalem
@@ -614,15 +682,15 @@ rmse = np.sqrt(mse)
 r2 = r2_score(y_test, y_pred)
 
    ## Results
-print("""
-      -------------------------------------
-        Model Errors:
-      -------------------------------------
-      """)
-print("Mean Absolute Error (MAE):", mae)
-print("Mean Squared Error (MSE):", mse)
-print("Root Mean Squared Error (RMSE):", rmse)
-print("R^2 Score:", r2)
+#print("""
+#      -------------------------------------
+#        Model Errors:
+#      -------------------------------------
+#      """)
+#print("Mean Absolute Error (MAE):", mae)
+#print("Mean Squared Error (MSE):", mse)
+#print("Root Mean Squared Error (RMSE):", rmse)
+#print("R^2 Score:", r2)
 
     # Graphs (basic_reg_weekly_predict)
 #plt.figure(figsize=(14, 6))
@@ -674,12 +742,12 @@ segment_map = {
 rfm["Segment"] = rfm["RFM_Score"].map(segment_map).fillna("Others")
 
     # Results
-print("""
-      -------------------------------------
-        RFM Analysis:
-      -------------------------------------
-      """)
-print(rfm.head(15))
+#print("""
+#      -------------------------------------
+#        RFM Analysis:
+#      -------------------------------------
+#      """)
+#print(rfm.head(15))
 
 """(print (15))
       -------------------------------------
@@ -706,12 +774,12 @@ musteri_id
 
     #Frequent customers
 frequent_customers = rfm[rfm["Segment"] == "Loyal Customers"]
-print("""
-      -------------------------------------
-        RFM Analysis- Loyal Customers:
-      -------------------------------------
-      """)
-print(frequent_customers.head())
+#print("""
+#      -------------------------------------
+#        RFM Analysis- Loyal Customers:
+#      -------------------------------------
+#      """)
+#print(frequent_customers.head())
 
 """(print)
       -------------------------------------

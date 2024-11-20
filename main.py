@@ -230,7 +230,7 @@ unique_products = merged_df["ürün_adi"].unique()
 unique_categories = merged_df["kategori"].unique()
 #print(unique_categories)
 """(print)
-['Ev Aletleri' 'Kırtasiye' 'Giyim' 'Elektronik' 'Mutfak Ürünleri' 'Kozmetik']
+['Elektronik' 'Kırtasiye' 'Ev Aletleri' 'Giyim' 'Mutfak Ürünleri']
 """
 
 
@@ -329,29 +329,29 @@ monthly_item_sales = merged_df.groupby(["ürün_adi"]).resample("ME", on="tarih"
 monthly_first = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].min()
 monthly_last = merged_df.groupby(merged_df["tarih"].dt.to_period("M"))["tarih"].max()
 
-#print("""
-#      -------------------------------------
-#        Monthly First Days:
-#      -------------------------------------
-#      """)
-#print(monthly_first)
-#print("""
-#      -------------------------------------
-#        Monthly Last Days:
-#      -------------------------------------
-#      """)
-#print(monthly_last)
+print("""
+      -------------------------------------
+        Monthly First Days:
+      -------------------------------------
+      """)
+print(monthly_first)
+print("""
+      -------------------------------------
+        Monthly Last Days:
+      -------------------------------------
+      """)
+print(monthly_last)
 
 
 ###2.2.2:Weekly Total Item Sales
 weekly_item_sales_sum = merged_df.resample("W-Mon", on="tarih")["adet"].sum()
 
-#print("""
-#      -------------------------------------
-#        Weekly Total Item Sales:
-#      -------------------------------------
-#      """)
-#print(weekly_item_sales_sum.head())
+print("""
+      -------------------------------------
+        Weekly Total Item Sales (First 5):
+      -------------------------------------
+      """)
+print(weekly_item_sales_sum.head())
 
     # Graphs (weekly_item_sales_sum)
 #plt.figure(figsize=(12, 6))

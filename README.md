@@ -147,25 +147,28 @@ This section focuses on analyzing categorical data, including total sales by cat
 - **Categoric Sales Trends by Age Group**: Sales were broken down by both age group and product category. The total sales for each combination of age group and category were calculated and then expressed as a percentage of the overall sales. This shows which product categories are most popular within each age group.
 
   **Key Insights**:
-  - The **Ev Aletleri** category is the highest for the 18-25 age group.
-  - The **Kırtasiye** category is the highest for the 26-35 age group.
-  - The **Giyim** category is the highest for the 36-50 age group.
-  - The **Kozmetik** category is the highest for the 50+ age group.
+  - The **Elektronik** category is the highest for the each age group.
+  - The **Kırtasiye** category is the second highest for the each age group.
 
-#### **3.3: Sex Analysis**
+  - The **Mutfak Ürünleri** category is the third highest for the 18-25 age group.
+  - The **Ev Aletleri** category is the third highest for the 26-35 age group.
+  - The **Giyim** category is the third highest for the 36-50 age group.
+  - The **Ev Aletleri** category is the third highest for the 50+ age group.
+
+#### **3.3: Gender Analysis**
 
 - **Sales Trends by Gender**: Total sales for each gender were calculated by grouping the data by the `cinsiyet` column and summing the `toplam_satis` values. The proportion of total sales for each gender was then computed to understand the gender distribution in sales.
 
 - **Categoric Sales Trends by Gender**: Similar to the age group analysis, sales were broken down by both gender and product category. The total sales for each combination of gender and category were calculated and then expressed as a percentage of the overall sales. This provides insight into the most popular product categories for each gender.
 
   **Key Insights**:
-  - For **Erkek** (Male) customers, **Ev Aletleri** is the highest category.
-  - For **Kadın** (Female) customers, **Kozmetik** is the highest category.
+  - The **Elektronik** and **Kırtasiye** categories are the highest for the each gender group.
+  - For **Erkek** (Male) customers, **Giyim** is the third highest category.
+  - For **Kadın** (Female) customers, **Ev Aletleri** is the third highest category.
 
 ### **Key Takeaways**
 
-- The **Ev Aletleri** category is popular among both younger (18-25) and male customers.
-- **Kozmetik** is more popular among older customers (50+) and female customers.
+- The **Elektronik** and **Kırtasiye** categories attract the most attention from customers of all ages and genders.
 - There is a diverse preference across different age groups and genders, highlighting the importance of targeting specific customer segments with tailored marketing strategies.
 
 

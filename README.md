@@ -224,14 +224,14 @@ This section covers additional analysis techniques, including Pareto analysis, c
 
 - **Pareto Analysis**: The total sales for each product were calculated and sorted in descending order. Using the 80/20 rule (Pareto principle), the analysis identifies the products that contribute to 80% of total sales. The cumulative sales were computed, and products were selected until the total sales reached 80%.
   
-    - **Results**: The products contributing to 80% of the total sales are displayed. This analysis helps identify key products driving the majority of sales. These products are `Kalem, Telefon, Çanta, Defter, Fırın, Su Şişesi, Mouse`
+    - **Results**: The products contributing to 80% of the total sales are displayed. This analysis helps identify key products driving the majority of sales. These products are `Kalem, Telefon, Defter, Çanta, Fırın, Mouse, Su Şişesi`
 
     - **Visualization**: A graph (`product_sales_pareto`) is created to visualize the Pareto distribution of product sales.
     ![Pareto Distribution of Product Sales](./graphs/product_sales_pareto.png)
 
 #### **5.2: Cohort Analysis**
 
-- **Cohort Creation**: Customers' first purchase date was identified, and a cohort month was assigned based on this date. This information was added to the new DataFrame and saved as .csv. The merged dataset, `merged_df_first_sale`, was created, and sample data was displayed. Also saved it as `merged_data_w_first_sale.csv` in `datasets/custom` folder. The sales data was then grouped by cohort month and sale month to calculate the number of active customers for each cohort.
+- **Cohort Creation**: Customers' first purchase date was identified, and a cohort month was assigned based on this date. This information and age_group information was added to the new DataFrame and saved as .csv. The merged dataset, `merged_df_first_sale`, was created, and sample data was displayed. Also saved it as `merged_data_w_first_sale.csv` in `datasets/custom` folder. The sales data was then grouped by cohort month and sale month to calculate the number of active customers for each cohort.
   
 - **Cohort Table**: A cohort table was created to calculate the percentage of customers making repeat purchases in subsequent months.
 

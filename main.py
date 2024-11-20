@@ -609,7 +609,7 @@ product_sales_pareto = product_sales[product_sales.cumsum() <= pareto_limit]
 
 #print("""
 #      -------------------------------------
-#        Pareto Analysis: Products that make up the top %80 of sales:
+#        Pareto Analysis- Products that make up the top %80 of sales:
 #      -------------------------------------
 #      """)
 #for product in product_sales_pareto.index:
@@ -618,11 +618,11 @@ product_sales_pareto = product_sales[product_sales.cumsum() <= pareto_limit]
 """(print)
 Kalem
 Telefon
-Çanta
 Defter
+Çanta
 Fırın
-Su Şişesi
 Mouse
+Su Şişesi
 """
 
     #Graphs (product_sales_pareto)
@@ -635,6 +635,7 @@ Mouse
 #plt.legend()
 #plt.grid(True)
 #plt.show()
+
 
 
 ###5.2: Cohort Analysis
@@ -709,15 +710,15 @@ rmse = np.sqrt(mse)
 r2 = r2_score(y_test, y_pred)
 
    ## Results
-#print("""
-#      -------------------------------------
-#        Model Errors:
-#      -------------------------------------
-#      """)
-#print("Mean Absolute Error (MAE):", mae)
-#print("Mean Squared Error (MSE):", mse)
-#print("Root Mean Squared Error (RMSE):", rmse)
-#print("R^2 Score:", r2)
+print("""
+      -------------------------------------
+        Model Errors:
+      -------------------------------------
+      """)
+print("Mean Absolute Error (MAE):", mae)
+print("Mean Squared Error (MSE):", mse)
+print("Root Mean Squared Error (RMSE):", rmse)
+print("R^2 Score:", r2)
 
     # Graphs (basic_reg_weekly_predict)
 #plt.figure(figsize=(14, 6))
@@ -729,6 +730,7 @@ r2 = r2_score(y_test, y_pred)
 #plt.legend()
 #plt.grid(True)
 #plt.show()
+
 
 
 ###5.4: RFM (Recency, Frequency, Monetary) Analysis
